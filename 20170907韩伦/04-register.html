@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		*{margin: 0;padding: 0;}
+		#box{
+			width: 400px;
+			height: 340px;
+			margin: 100px auto;
+			background: #e1e1e1;
+		}
+		h1{
+			margin: 0px 0 0 130px;
+		}
+		input{
+			width: 300px;
+			height: 50px;
+			float: left;
+			font-size: 16px;
+			margin: 10px 0 20px 50px;
+		}
+		.right{
+			color: green;
+		}
+		.error{
+			color: red;
+		}
+		#username,#password{
+			display: none;
+			float: left;
+			margin-left: 120px;
+		}
+		p{
+			float: right;
+			width: 100px;
+		}
+	</style>
+	<body>
+		<div id="box">
+			<h1>用户注册</h1>
+			<input type="text" placeholder="请输入用户名" name="username"/>
+			<span id="username"></span>
+			<input type="password" name="password" placeholder="请输入密码"/>
+			<span id="password">密码长度为6-18位</span>
+			<input type="submit" name="submit" value="注册"/>
+			<p>或<a href="05-登录.html">登录</a></p>
+		</div>
+		<script src="myajax.js"></script>
+		<script type="text/javascript">
+			var oUsername = document.querySelector('input[name=username]');
+			var oPassword = document.querySelector('input[name=password]');
+			var oSubmit = document.querySelector('input[name=submit]');
+			var oSpanUser = document.querySelector('#username');
+			var oSpanPass = document.querySelector('#password');
+			oSubmit.onclick = function(){
+				myajax.post('http://h6.duchengjiu.top/shop/api_user.php',{
+					status : 'register',
+					username : oUsername.value,
+					password : oPassword.value
+				},function(error,responseText){
+					var json = JSON.parse(responseText);
+					console.log(json);
+					oSpanUser.innerText = json.message;
+						oSpanUser.style.display = 'block';
+						if (json.code === 0) {
+							oSpanUser.className = 'right';
+						}else {
+							oSpanUser.className = 'error';
+						}
+				});
+			}
+			oUsername.onblur = function(){
+				myajax.post('http://h6.duchengjiu.top/shop/api_user.php',{
+					status : 'check',
+					username : oUsername.value
+				},function(error,responseText){
+					var json = JSON.parse(responseText);
+					console.log(json);
+					oSpanUser.innerText = json.message;
+						oSpanUser.style.display = 'block';
+						if (json.code === 0) {
+							oSpanUser.className = 'right';
+						}else {
+							oSpanUser.className = 'error';
+						}
+				});
+			}
+			oPassword.onblur = function(){
+				var reg = /^\w{6,18}$/; 
+				if(reg.test(oPassword.value)){
+					oSpanPass.style.display = 'none';
+				}else{
+					oSpanPass.style.display = 'block';
+					oSpanPass.className = 'error';
+				}
+			}
+		</script>
+	</body>
+</html>
